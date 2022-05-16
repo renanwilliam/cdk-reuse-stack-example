@@ -19,7 +19,7 @@ export type CloudFormationDetails = {
 export default class ReusableRootStack {
     readonly stackName: string;
 
-    constructor(stackName: string) {
+    constructor(stackName: string, private options?: AWS.CloudFormation.Types.ClientConfiguration) {
         this.stackName = stackName;
     }
 
@@ -34,7 +34,7 @@ export default class ReusableRootStack {
     }
 
     protected async getNestedsStacks(stackName: string) {
-        const cloudformation = new AWS.CloudFormation();
+        const cloudformation = new AWS.CloudFormation(this.options);
         const resourcesResult = await cloudformation.describeStackResources({
             StackName: stackName
         }).promise();
@@ -61,7 +61,7 @@ export default class ReusableRootStack {
     }
 
     protected async getNestedsStackDetails(stackName: string) {
-        const cloudformation = new AWS.CloudFormation();
+        const cloudformation = new AWS.CloudFormation(this.options);
         const currentNestedStacks = await this.getNestedsStacks(stackName);
 
         let nestedStacks: { [stackName: string]: cfninc.CfnIncludeProps; } = undefined;
@@ -101,7 +101,7 @@ export default class ReusableRootStack {
     }
 
     private async getStackDetails(): Promise<CloudFormationDetails> {
-        const cloudformation = new AWS.CloudFormation();
+        const cloudformation = new AWS.CloudFormation(this.options);
         const stacksResult = await cloudformation.describeStacks({
             StackName: this.stackName,
         }).promise();
