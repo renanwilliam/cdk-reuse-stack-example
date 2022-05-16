@@ -6,7 +6,7 @@ export class ReusableRootStackWithNestedStacks extends Stack {
     constructor(scope: Construct, id: string, tmpFileName: string, nestedStacks: { [stackName: string]: cfninc.CfnIncludeProps; }, stack: AWS.CloudFormation.Stack, props?: StackProps) {
         super(scope, id, props);
 
-        const template = new cfninc.CfnInclude(this, 'CfCurrentTemplate', {
+        new cfninc.CfnInclude(this, 'CfCurrentTemplate', {
             templateFile: tmpFileName,
             loadNestedStacks: nestedStacks,
             parameters: stack.Parameters.reduce((previousValue, currentValue) => {
